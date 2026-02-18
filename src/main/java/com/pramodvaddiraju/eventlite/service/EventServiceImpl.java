@@ -27,46 +27,96 @@ public class EventServiceImpl implements EventService{
     @Override
     public EventResponse createEvent(EventRequest eventRequest) {
         Event event = modelMapper.map(eventRequest, Event.class);
-        Event createdEvent = eventRepository.save(event);
-        log.info("Event created successfully with id: {}", event.getId());
-        return modelMapper.map(createdEvent, EventResponse.class);
+        Event saveEvent = eventRepository.save(event);
+        log.info("Event saved by id: {}", event.getId());
+        return modelMapper.map(saveEvent, EventResponse.class);
     }
 
     @Override
     public Page<EventResponse> getAllEvents(Pageable pageable) {
-        Page<Event> event = eventRepository.findAll(pageable);
-        log.info("Events fetched successfully");
-        return event.map(e -> modelMapper.map(e, EventResponse.class));
+        Page<Event> getAll = eventRepository.findAll(pageable);
+        log.info("All events fetched");
+        return getAll.map(m -> modelMapper.map(getAll, EventResponse.class));
     }
 
     @Override
     public EventResponse getEventById(Long id) {
-        Event getById = eventRepository.findById(id).orElseThrow(
-                ()-> new ResourceNotFoundException("Not found with id: " + id)
+        Event event = eventRepository.findById(id).orElseThrow(
+                ()-> new ResourceNotFoundException("Not found with id: "+id)
         );
-        return modelMapper.map(getById, EventResponse.class);
+        log.info("Event fetched by id: {}", event.getId());
+        return modelMapper.map(event, EventResponse.class);
     }
 
     @Override
     public EventResponse updateEvent(Long id, EventRequest eventRequest) {
         Event existingEvent = eventRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Event not found with id: " + id)
+                () -> new ResourceNotFoundException("Not found with id: "+id)
         );
+        log.info("Update request initiated for event id:" + id);
         existingEvent.setTitle(eventRequest.getTitle());
         existingEvent.setDescription(eventRequest.getDescription());
         existingEvent.setEventDate(eventRequest.getEventDate());
         Event updatedEvent = eventRepository.save(existingEvent);
-        log.info("Event updated successfully");
-
+        log.info("Event successfully updated with id: {}", id);
         return modelMapper.map(updatedEvent, EventResponse.class);
+
     }
 
     @Override
     public void deleteEvent(Long id) {
         Event event = eventRepository.findById(id).orElseThrow(
-                ()-> new ResourceNotFoundException("Not found with id: " + id)
+                () -> new ResourceNotFoundException("Not found with id: "+id)
         );
+        log.info("Event deleted with id: {}", event.getId());
         eventRepository.delete(event);
-        log.info("Event deleted successfully wit id: {}", id);
     }
+
+
+//
+//    @Override
+//    public EventResponse createEvent(EventRequest eventRequest) {
+//        Event event = modelMapper.map(eventRequest, Event.class);
+//        Event createdEvent = eventRepository.save(event);
+//        log.info("Event created successfully with id: {}", event.getId());
+//        return modelMapper.map(createdEvent, EventResponse.class);
+//    }
+//
+//    @Override
+//    public Page<EventResponse> getAllEvents(Pageable pageable) {
+//        Page<Event> event = eventRepository.findAll(pageable);
+//        log.info("Events fetched successfully");
+//        return event.map(e -> modelMapper.map(e, EventResponse.class));
+//    }
+//
+//    @Override
+//    public EventResponse getEventById(Long id) {
+//        Event getById = eventRepository.findById(id).orElseThrow(
+//                ()-> new ResourceNotFoundException("Not found with id: " + id)
+//        );
+//        return modelMapper.map(getById, EventResponse.class);
+//    }
+//
+//    @Override
+//    public EventResponse updateEvent(Long id, EventRequest eventRequest) {
+//        Event existingEvent = eventRepository.findById(id).orElseThrow(
+//                () -> new ResourceNotFoundException("Event not found with id: " + id)
+//        );
+//        existingEvent.setTitle(eventRequest.getTitle());
+//        existingEvent.setDescription(eventRequest.getDescription());
+//        existingEvent.setEventDate(eventRequest.getEventDate());
+//        Event updatedEvent = eventRepository.save(existingEvent);
+//        log.info("Event updated successfully");
+//
+//        return modelMapper.map(updatedEvent, EventResponse.class);
+//    }
+//
+//    @Override
+//    public void deleteEvent(Long id) {
+//        Event event = eventRepository.findById(id).orElseThrow(
+//                ()-> new ResourceNotFoundException("Not found with id: " + id)
+//        );
+//        eventRepository.delete(event);
+//        log.info("Event deleted successfully wit id: {}", id);
+//    }
 }

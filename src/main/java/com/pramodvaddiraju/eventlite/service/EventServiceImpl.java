@@ -2,6 +2,7 @@ package com.pramodvaddiraju.eventlite.service;
 
 import com.pramodvaddiraju.eventlite.dto.EventRequest;
 import com.pramodvaddiraju.eventlite.dto.EventResponse;
+import com.pramodvaddiraju.eventlite.email.EmailService;
 import com.pramodvaddiraju.eventlite.entity.Event;
 import com.pramodvaddiraju.eventlite.exception.ResourceNotFoundException;
 import com.pramodvaddiraju.eventlite.repository.EventRepository;
@@ -17,10 +18,12 @@ public class EventServiceImpl implements EventService{
     private static final Logger log = LoggerFactory.getLogger(EventServiceImpl.class);
     private EventRepository eventRepository;
     private ModelMapper modelMapper;
+    private final EmailService emailService;
 
-    public EventServiceImpl(ModelMapper modelMapper, EventRepository eventRepository){
+    public EventServiceImpl(ModelMapper modelMapper, EventRepository eventRepository, EmailService emailService){
         this.eventRepository = eventRepository;
         this.modelMapper = modelMapper;
+        this.emailService = emailService;
 
     }
 
@@ -29,6 +32,10 @@ public class EventServiceImpl implements EventService{
         Event event = modelMapper.map(eventRequest, Event.class);
         Event saveEvent = eventRepository.save(event);
         log.info("Event saved by id: {}", event.getId());
+        emailService.sendEventCreationMail(
+                eventRequest.getEmail(),
+                eventRequest.getTitle()
+        );
         return modelMapper.map(saveEvent, EventResponse.class);
     }
 

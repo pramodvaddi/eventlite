@@ -13,6 +13,7 @@ public class EventRequest {
     private String description;
     @NotNull(message = "date cannot be blank")
     private LocalDateTime eventDate;
+    private String email;
 
     public EventRequest(){
 
@@ -40,5 +41,13 @@ public class EventRequest {
 
     public void setEventDate(LocalDateTime eventDate) {
         this.eventDate = eventDate;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
